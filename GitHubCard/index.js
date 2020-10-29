@@ -1,22 +1,27 @@
 import axios from 'axios';
+import gsap from 'gsap';
 
 /*
-  STEP 1: using axios, send a GET request to the following URL
-    (replacing the placeholder with your Github name):
-    https://api.github.com/users/<your name>
+STEP 1: using axios, send a GET request to the following URL
+(replacing the placeholder with your Github name):
+https://api.github.com/users/<your name>
 */
 
-axios
- .get('https://api.github.com/users/bgmad')
- .then(res => {
-    const userData = res.data;
-    const cards = document.querySelector('.cards');
-    cards.appendChild(createCard(userData));
-    console.log(createCard(userData));
- })
- .catch(err => {
-   console.log(`Data ${err.response.data.message}`);
- })
+
+const followersArray = [ 'bgmad', 'Ladrillo', 'BigKnell', 'tetondan', 'justsml', 'zoelud'];
+
+followersArray.forEach(username => {
+  axios
+   .get(`https://api.github.com/users/${username}`)
+   .then(res => {
+      const userData = res.data;
+      const cards = document.querySelector('.cards');
+      cards.appendChild(createCard(userData));
+   })
+   .catch(err => {
+     console.log(`Data ${err.response.data.message}`);
+   });
+});
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -43,7 +48,6 @@ Using that array, iterate over it, requesting data for each user, creating a new
 user, and adding that card to the DOM.
 */
 
-const followersArray = [];
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -77,8 +81,11 @@ function createCard(userData) {
     const followers = document.createElement('p');
     const following = document.createElement('p');
     const bio = document.createElement('p');
+  const additionalInfo = document.createElement('div');
+
 
   card.classList.add('card');
+  // card.classList.add('card-closed');
   userAvatar.src = userData['avatar_url'];
   cardInfo.classList.add('card-info');
   name.classList.add('name');
@@ -92,6 +99,7 @@ function createCard(userData) {
   followers.textContent = `Followers: ${userData.followers}`;
   following.textContent = `Following: ${userData.following}`;
   bio.textContent = `Bio: ${userData.bio}`;
+  additionalInfo.classList.add('more-container'); 
 
   card.appendChild(userAvatar);
   card.appendChild(cardInfo);
@@ -103,6 +111,20 @@ function createCard(userData) {
     cardInfo.appendChild(followers);
     cardInfo.appendChild(following);
     cardInfo.appendChild(bio);
+
+
+  card.addEventListener('click', event => {
+    card.classList.toggle('card-open');
+    
+    if(card.classList.value === 'card card-open'){
+      card.appendChild(additionalInfo);
+      console.log(card);
+    }
+    else{
+      card.removeChild(additionalInfo);
+      console.log(card);
+    }
+  });
 
   return card;
 }
